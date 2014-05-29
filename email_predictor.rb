@@ -13,17 +13,27 @@ class EmailPredictor
   end
 
   def possible_emails(name, domain)
+    emails = craft_emails(name, domain)
+    patterns = @companies[domain]
+    result = []
+
+    result << emails[0] if patterns.include?(1) || patterns.empty?
+    result << emails[1] if patterns.include?(2) || patterns.empty?
+    result << emails[2] if patterns.include?(3) || patterns.empty?
+    result << emails[3] if patterns.include?(4) || patterns.empty?
+  end
+
+  def craft_emails(name, domain)
     name_arr = name.downcase.split(" ")
     first_name = name_arr.first
     last_name = name_arr.last
 
-    patterns = @companies[domain]
-    emails = []
-
-    emails << (first_name[0] + "." + last_name[0] + "@" + domain) if patterns.include?(1) || patterns.empty?
-    emails << (first_name[0] + "." + last_name + "@" + domain) if patterns.include?(2) || patterns.empty?
-    emails << (first_name + "." + last_name[0] + "@" + domain) if patterns.include?(3) || patterns.empty?
-    emails << (first_name + "." + last_name + "@" + domain) if patterns.include?(4) || patterns.empty?
+    strings = [
+      first_name[0] + "." + last_name[0] + "@" + domain,
+      first_name[0] + "." + last_name + "@" + domain,
+      first_name + "." + last_name[0] + "@" + domain,
+      first_name + "." + last_name + "@" + domain
+    ]
   end
 
   def set_pattern(email)
@@ -42,7 +52,6 @@ class EmailPredictor
   def update_pattern(domain, pattern)
     @companies[domain] = pattern
   end
-
 end
 
 #given a name and domain, predict an email address
@@ -54,15 +63,13 @@ end
 #patterns can also be stored and be represented by numbers
 #produce_email will return either an array of four addresses, one address, or nothing
 
-# test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
-#   "Damon Aw" => "damon.aw@alphasights.com",
-#   "Linda Li" => "linda.li@alphasights.com",
-#   "Larry Page" => "larry.p@google.com",
-#   "Sergey Brin" => "s.brin@google.com",
-#   "Steve Jobs" => "s.j@apple.com"})
+test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
+  "Damon Aw" => "damon.aw@alphasights.com",
+  "Linda Li" => "linda.li@alphasights.com",
+  "Larry Page" => "larry.p@google.com",
+  "Sergey Brin" => "s.brin@google.com",
+  "Steve Jobs" => "s.j@apple.com"})
 
-# p test.companies
-
-# p test.possible_emails("chad engleman", "alphasights.com")
-# p test.possible_emails("chad engleman", "shmoogle.com")
-
+p test.companies
+p test.possible_emails("chad engleman", "alphasights.com")
+p test.possible_emails("chad engleman", "shmoogle.com")
