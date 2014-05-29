@@ -12,7 +12,7 @@ class EmailPredictor
     end
   end
 
-  def produce_emails(name, domain)
+  def possible_emails(name, domain)
     name_arr = name.downcase.split(" ")
     first_name = name_arr.first
     last_name = name_arr.last
@@ -20,29 +20,15 @@ class EmailPredictor
     patterns = @companies[domain]
     emails = []
 
-    if patterns == []
-      emails = [
-        first_name[0] + "." + last_name[0] + "@" + domain,
-        first_name[0] + "." + last_name + "@" + domain,
-        first_name + "." + last_name[0] + "@" + domain,
-        first_name + "." + last_name + "@" + domain
-      ]
-      return emails
-    end
-
-    emails << (first_name[0] + "." + last_name[0] + "@" + domain) if patterns.include?(1)
-    emails << (first_name[0] + "." + last_name + "@" + domain) if patterns.include?(2)
-    emails << (first_name + "." + last_name[0] + "@" + domain) if patterns.include?(3)
-    emails << (first_name + "." + last_name + "@" + domain) if patterns.include?(4)
-
-    emails
+    emails << (first_name[0] + "." + last_name[0] + "@" + domain) if patterns.include?(1) || patterns.empty?
+    emails << (first_name[0] + "." + last_name + "@" + domain) if patterns.include?(2) || patterns.empty?
+    emails << (first_name + "." + last_name[0] + "@" + domain) if patterns.include?(3) || patterns.empty?
+    emails << (first_name + "." + last_name + "@" + domain) if patterns.include?(4) || patterns.empty?
   end
 
   def set_pattern(email)
     email_arr = email.split("@")
-
     name_arr = email_arr.first.split(".")
-
 
     first_length = name_arr[0].length
     last_length = name_arr[1].length
@@ -68,14 +54,15 @@ end
 #patterns can also be stored and be represented by numbers
 #produce_email will return either an array of four addresses, one address, or nothing
 
-test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
-  "Damon Aw" => "damon.aw@alphasights.com",
-  "Linda Li" => "linda.li@alphasights.com",
-  "Larry Page" => "larry.p@google.com",
-  "Sergey Brin" => "s.brin@google.com",
-  "Steve Jobs" => "s.j@apple.com"})
+# test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
+#   "Damon Aw" => "damon.aw@alphasights.com",
+#   "Linda Li" => "linda.li@alphasights.com",
+#   "Larry Page" => "larry.p@google.com",
+#   "Sergey Brin" => "s.brin@google.com",
+#   "Steve Jobs" => "s.j@apple.com"})
 
-p test.companies
+# p test.companies
 
-p test.produce_emails("chad englman", "google.com")
+# p test.possible_emails("chad engleman", "alphasights.com")
+# p test.possible_emails("chad engleman", "shmoogle.com")
 
