@@ -3,45 +3,54 @@ class EmailPredictor
   attr_accessor :companies
 
   def initialize(dataset)
-    @companies = Hash.new(nil)
+    @companies = Hash.new([])
 
     dataset.each do |name, email|
-      @companies.merge!( set_pattern(email) )
+      domain = email.split("@").last
+      pattern = set_pattern(email)
+      @companies[domain] += pattern if @companies[domain] != pattern
     end
   end
 
-  def produce_email(name, domain) #method needs DRYing, allow for possibility of multiple patterns
-
+  def produce_emails(name, domain)
     name_arr = name.downcase.split(" ")
     first_name = name_arr.first
     last_name = name_arr.last
 
-    return first_name[0] + "." + last_name[0] + "@" + domain if @companies[domain] == 1
-    return first_name[0] + "." + last_name + "@" + domain if @companies[domain] == 2
-    return first_name + "." + last_name[0] + "@" + domain if @companies[domain] == 3
-    return first_name + "." + last_name + "@" + domain if @companies[domain] == 4
+    patterns = @companies[domain]
+    emails = []
 
-    [
-      first_name[0] + "." + last_name[0] + "@" + domain,
-      first_name[0] + "." + last_name + "@" + domain,
-      first_name + "." + last_name[0] + "@" + domain,
-      first_name + "." + last_name + "@" + domain
-    ]
+    if patterns == []
+      emails = [
+        first_name[0] + "." + last_name[0] + "@" + domain,
+        first_name[0] + "." + last_name + "@" + domain,
+        first_name + "." + last_name[0] + "@" + domain,
+        first_name + "." + last_name + "@" + domain
+      ]
+      return emails
+    end
+
+    emails << (first_name[0] + "." + last_name[0] + "@" + domain) if patterns.include?(1)
+    emails << (first_name[0] + "." + last_name + "@" + domain) if patterns.include?(2)
+    emails << (first_name + "." + last_name[0] + "@" + domain) if patterns.include?(3)
+    emails << (first_name + "." + last_name + "@" + domain) if patterns.include?(4)
+
+    emails
   end
 
   def set_pattern(email)
     email_arr = email.split("@")
 
     name_arr = email_arr.first.split(".")
-    domain = email_arr.last
+
 
     first_length = name_arr[0].length
     last_length = name_arr[1].length
     
-    return {domain => 1} if first_length + last_length == 2
-    return {domain => 2} if first_length == 1
-    return {domain => 3} if last_length == 1
-    return {domain => 4} if first_length > 1 && last_length > 1
+    return [1] if first_length + last_length == 2
+    return [2] if first_length == 1
+    return [3] if last_length == 1
+    return [4] if first_length > 1 && last_length > 1
   end
 
   def update_pattern(domain, pattern)
@@ -59,14 +68,14 @@ end
 #patterns can also be stored and be represented by numbers
 #produce_email will return either an array of four addresses, one address, or nothing
 
-# test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
-#   "Damon Aw" => "damon.aw@alphasights.com",
-#   "Linda Li" => "linda.li@alphasights.com",
-#   "Larry Page" => "larry.p@google.com",
-#   "Sergey Brin" => "s.brin@google.com",
-#   "Steve Jobs" => "s.j@apple.com"})
+test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
+  "Damon Aw" => "damon.aw@alphasights.com",
+  "Linda Li" => "linda.li@alphasights.com",
+  "Larry Page" => "larry.p@google.com",
+  "Sergey Brin" => "s.brin@google.com",
+  "Steve Jobs" => "s.j@apple.com"})
 
-# p test.companies
+p test.companies
 
-# p test.produce_email("Chad englman", "google.com")
+p test.produce_emails("chad englman", "google.com")
 
