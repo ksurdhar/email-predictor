@@ -25,6 +25,10 @@ class EmailPredictor
     return {domain => 4} if first_length > 1 && last_length > 1
   end
 
+  def update_pattern(domain, pattern)
+    @companies[domain] = pattern
+  end
+
 end
 
 
@@ -43,6 +47,8 @@ end
 #   "Larry Page" => "larry.p@google.com",
 #   "Sergey Brin" => "s.brin@google.com",
 #   "Steve Jobs" => "s.j@apple.com"})
+
+# test.update_pattern("alphasights.com", 1)
 
 # p test.companies
 
