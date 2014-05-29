@@ -3,11 +3,30 @@ class EmailPredictor
   attr_accessor :companies
 
   def initialize(dataset)
-    @companies = {}
+    @companies = Hash.new(nil)
 
     dataset.each do |name, email|
       @companies.merge!( set_pattern(email) )
     end
+  end
+
+  def produce_email(name, domain) #method needs DRYing, allow for possibility of multiple patterns
+
+    name_arr = name.downcase.split(" ")
+    first_name = name_arr.first
+    last_name = name_arr.last
+
+    return first_name[0] + "." + last_name[0] + "@" + domain if @companies[domain] == 1
+    return first_name[0] + "." + last_name + "@" + domain if @companies[domain] == 2
+    return first_name + "." + last_name[0] + "@" + domain if @companies[domain] == 3
+    return first_name + "." + last_name + "@" + domain if @companies[domain] == 4
+
+    [
+      first_name[0] + "." + last_name[0] + "@" + domain,
+      first_name[0] + "." + last_name + "@" + domain,
+      first_name + "." + last_name[0] + "@" + domain,
+      first_name + "." + last_name + "@" + domain
+    ]
   end
 
   def set_pattern(email)
@@ -31,7 +50,6 @@ class EmailPredictor
 
 end
 
-
 #given a name and domain, predict an email address
 #four patterns possible: first.last, f.last, first.l, f.l
 
@@ -48,7 +66,7 @@ end
 #   "Sergey Brin" => "s.brin@google.com",
 #   "Steve Jobs" => "s.j@apple.com"})
 
-# test.update_pattern("alphasights.com", 1)
-
 # p test.companies
+
+# p test.produce_email("Chad englman", "google.com")
 
