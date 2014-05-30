@@ -38,7 +38,7 @@ class EmailPredictor
       end
       predictions
     else
-      ["Name and domain is invalid!"]
+      ["Name or domain is invalid."]
     end
   end
 
@@ -56,7 +56,7 @@ class EmailPredictor
   end
 
   def update_pattern(domain, pattern)
-    @companies[domain] = pattern
+    @companies[domain] = [pattern]
   end
 
   def valid_name?(name)
@@ -67,15 +67,3 @@ class EmailPredictor
     domain[/^[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/] ? true : false
   end
 end
-
-test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
-  "Damon Aw" => "damon.aw@alphasights.com",
-  "Linda Li" => "linda.li@alphasights.com",
-  "Larry Page" => "larry.p@google.com",
-  "Sergey Brin" => "s.brin@google.com",
-  "Steve Jobs" => "s.j@apple.com"})
-
-p test.companies
-p test.predicted_emails("chad bro", "alphasights.com")
-p test.predicted_emails("chad engleman", "google.com")
-
