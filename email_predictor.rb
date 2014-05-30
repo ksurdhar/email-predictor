@@ -1,5 +1,4 @@
 class EmailPredictor
-
   attr_accessor :companies
 
   def initialize(dataset)
@@ -13,19 +12,6 @@ class EmailPredictor
     end
   end
 
-  def predicted_emails(name, domain)
-    emails = all_emails(name, domain)
-    patterns = @companies[domain]
-    predictions = []
-
-    if patterns.empty?
-      predictions = emails
-    else
-      patterns.each { |pattern| predictions << emails[pattern] }
-    end
-    predictions
-  end
-
   def all_emails(name, domain)
     full_name = name.downcase.split(" ")
     first_name = full_name.first
@@ -37,6 +23,23 @@ class EmailPredictor
       first_name + "." + last_name[0] + "@" + domain,
       first_name + "." + last_name + "@" + domain
     ]
+  end
+
+  def predicted_emails(name, domain)
+    if valid_name?(name) && valid_domain?(domain)
+      emails = all_emails(name, domain)
+      patterns = @companies[domain]
+      predictions = []
+
+      if patterns.empty?
+        predictions = emails
+      else
+        patterns.each { |pattern| predictions << emails[pattern] }
+      end
+      predictions
+    else
+      ["Name and domain is invalid!"]
+    end
   end
 
   def set_pattern(email)
@@ -55,6 +58,14 @@ class EmailPredictor
   def update_pattern(domain, pattern)
     @companies[domain] = pattern
   end
+
+  def valid_name?(name)
+    name[/^[a-zA-Z]+\s[a-zA-Z]+$/] ? true : false
+  end
+
+  def valid_domain?(domain)
+    domain[/^[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/] ? true : false
+  end
 end
 
 test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
@@ -65,5 +76,6 @@ test = EmailPredictor.new({"John Ferguson" => "john.ferguson@alphasights.com",
   "Steve Jobs" => "s.j@apple.com"})
 
 p test.companies
-p test.predicted_emails("chad engleman", "alphasights.com")
-p test.predicted_emails("chad engleman", "shmoogle.com")
+p test.predicted_emails("chad bro", "alphasights.com")
+p test.predicted_emails("chad engleman", "google.com")
+
