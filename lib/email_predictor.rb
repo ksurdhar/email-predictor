@@ -18,7 +18,7 @@ class EmailPredictor
     predictions = []
 
     if patterns.empty?
-      predictions = emails
+      predictions = emails.values
     else
       patterns.each { |pattern| predictions << emails[pattern] }
     end
@@ -32,14 +32,12 @@ class EmailPredictor
     first_name = full_name.first
     last_name = full_name.last
 
-    #make hash
-    #symbols as keys
-    strings = [
-      first_name[0] + "." + last_name[0] + "@" + domain,
-      first_name[0] + "." + last_name + "@" + domain,
-      first_name + "." + last_name[0] + "@" + domain,
-      first_name + "." + last_name + "@" + domain
-    ]
+    strings = {
+      :initial_dot_initial => first_name[0] + "." + last_name[0] + "@" + domain,
+      :initial_dot_name => first_name[0] + "." + last_name + "@" + domain,
+      :name_dot_initial => first_name + "." + last_name[0] + "@" + domain,
+      :name_dot_name => first_name + "." + last_name + "@" + domain
+    }
   end
 
   def set_pattern(email)
@@ -49,11 +47,10 @@ class EmailPredictor
     first_length = full_name[0].length
     last_length = full_name[1].length
     
-    return [0] if first_length + last_length == 2
-    return [1] if first_length == 1
-    return [2] if last_length == 1
-    return [3] if first_length > 1 && last_length > 1
-    #replace with symbols
+    return [:initial_dot_initial] if first_length + last_length == 2
+    return [:initial_dot_name] if first_length == 1
+    return [:name_dot_initial] if last_length == 1
+    return [:name_dot_name] if first_length > 1 && last_length > 1
   end
 
   def update_pattern(domain, pattern)

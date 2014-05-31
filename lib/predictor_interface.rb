@@ -2,7 +2,6 @@ require "email_predictor"
 require "io/console"
 
 class PredictorInterface
-
   attr_accessor :predictor
 
   def initialize
