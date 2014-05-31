@@ -12,34 +12,34 @@ class EmailPredictor
     end
   end
 
+  def predicted_emails(name, domain)
+    emails = all_emails(name, domain)
+    patterns = @companies[domain]
+    predictions = []
+
+    if patterns.empty?
+      predictions = emails
+    else
+      patterns.each { |pattern| predictions << emails[pattern] }
+    end
+    predictions
+  end
+
+  private
+
   def all_emails(name, domain)
     full_name = name.downcase.split(" ")
     first_name = full_name.first
     last_name = full_name.last
 
+    #make hash
+    #symbols as keys
     strings = [
       first_name[0] + "." + last_name[0] + "@" + domain,
       first_name[0] + "." + last_name + "@" + domain,
       first_name + "." + last_name[0] + "@" + domain,
       first_name + "." + last_name + "@" + domain
     ]
-  end
-
-  def predicted_emails(name, domain)
-    if valid_name?(name) && valid_domain?(domain)
-      emails = all_emails(name, domain)
-      patterns = @companies[domain]
-      predictions = []
-
-      if patterns.empty?
-        predictions = emails
-      else
-        patterns.each { |pattern| predictions << emails[pattern] }
-      end
-      predictions
-    else
-      ["Name or domain is invalid."]
-    end
   end
 
   def set_pattern(email)
@@ -53,17 +53,10 @@ class EmailPredictor
     return [1] if first_length == 1
     return [2] if last_length == 1
     return [3] if first_length > 1 && last_length > 1
+    #replace with symbols
   end
 
   def update_pattern(domain, pattern)
     @companies[domain] = [pattern]
-  end
-
-  def valid_name?(name)
-    name[/^[a-zA-Z]+\s[a-zA-Z]+$/] ? true : false
-  end
-
-  def valid_domain?(domain)
-    domain[/^[a-zA-Z0-9]+\.[a-zA-Z]{2,}$/] ? true : false
   end
 end
