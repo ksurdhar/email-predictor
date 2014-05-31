@@ -19,7 +19,7 @@ class PredictorInterface
   def run
     find_email
   
-    puts "Predict another email? (y):"
+    puts "\nPredict another email? (y):"
     response = gets.chomp.downcase
     run if response == "y"
 
@@ -28,17 +28,17 @@ class PredictorInterface
 
   def find_email
     begin
-      puts "Enter a name to predict an email (ex. 'kiran surdhar'):"
+      puts "\nEnter a name to predict an email (ex. 'kiran surdhar'):"
       name = gets.chomp
-      puts "Now enter a domain (ex. 'alphasights.com'):"
+      puts "\nNow enter a domain (ex. 'alphasights.com'):"
       domain = gets.chomp
 
       if valid_name?(name) && valid_domain?(domain)
         response = @predictor.predicted_emails(name, domain)
-        puts "Use the following emails: \n"
+        puts "\nTry the following email(s): \n\n"
         p response
       else
-        raise ArgumentError.new "Cannot predict. Name or domain is invalid. \n"
+        raise ArgumentError.new "\nCannot predict. Name or domain is invalid.\n"
       end
       
     rescue ArgumentError => e
