@@ -1,4 +1,4 @@
-require "email_predictor"
+require_relative "email_predictor"
 require "io/console"
 
 class PredictorInterface
