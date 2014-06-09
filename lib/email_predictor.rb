@@ -8,7 +8,7 @@ class EmailPredictor
       domain = email.split("@").last
       pattern = set_pattern(email)
 
-      @companies[domain] += pattern if @companies[domain] != pattern
+      @companies[domain] += pattern if !@companies[domain].include?(pattern)
     end
   end
 

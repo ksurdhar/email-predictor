@@ -1,0 +1,6 @@
+What could be improved?
+
+The cmd line interface could be more robust
+Add functionality to add or change email patterns for a company
+Add ability to list 
+Improve #valid_name? to allow single name 
